@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {screen, render} from '@testing-library/react'
+import {screen, render, fireEvent} from '@testing-library/react'
 import {FavoriteNumber} from '../favorite-number'
 
 test('renders a number input with a label "Favorite Number"', () => {
@@ -8,4 +8,15 @@ test('renders a number input with a label "Favorite Number"', () => {
   const input = screen.getByLabelText(/favorite number/i)
   expect(input).toHaveAttribute('type', 'number')
   // debug(input)
+})
+
+test('entering an invalid value shows an error message', () => {
+  render(<FavoriteNumber />)
+  const input = screen.getByLabelText(/favorite number/i)
+  fireEvent.change(input, {
+    target: {
+      value: '10',
+    },
+  })
+  expect(screen.getByRole('alert')).toHaveTextContent(/the number is invalid/i)
 })
