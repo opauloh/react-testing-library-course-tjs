@@ -100,3 +100,22 @@ debug(input)
 It defaults to the container where all of our queries are bound to, or it will
 print out the DOM node that we pass to it, making it much easier to develop our
 tests
+
+- testing-library/react provides us the **fireEvent** API, and this allows us to
+  fire an event on the element that we want to test:
+
+```js
+test('entering an invalid value shows an error message', () => {
+  render(<FavoriteNumber />)
+  const input = screen.getByLabelText(/favorite number/i)
+  fireEvent.change(input, {
+    target: {
+      value: '10',
+    },
+  })
+  expect(screen.getByRole('alert')).toHaveTextContent(/the number is invalid/i)
+})
+```
+
+in the above scenario we fired an on change event in the input, with the options
+target.value equals to 10
