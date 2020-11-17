@@ -73,3 +73,19 @@ _Course material for testing React components using react-testing-library_
 
 Also, you can check in the docs for all currently available assertion methods:
 (https://github.com/testing-library/jest-dom)[https://github.com/testing-library/jest-dom]
+
+- We can get our elements in a less imperative way, like for example using
+
+```js
+const input = screen.getByLabelText(/favorite number/i)
+```
+
+- We can use regex to let our tests more flexible, like that:
+  `/favorite number/i`, the "i", stands for insensitive case, because in this
+  case the user is not impacted by the case of the label texts, and if we decide
+  to change it, we don't need to rewrite our tests:
+
+```js
+const input = screen.getByLabelText(/favorite number/i)
+expect(input).toHaveAttribute('type', 'number')
+```
