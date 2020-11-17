@@ -34,11 +34,6 @@
     "redux": "^4.0.4",
     "test-data-bot": "^0.8.0"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "kcd-scripts pre-commit"
-    }
-  },
   "babel": {
     "presets": [
       "kcd-scripts/babel"
