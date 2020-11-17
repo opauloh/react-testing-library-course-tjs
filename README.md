@@ -119,3 +119,18 @@ test('entering an invalid value shows an error message', () => {
 
 in the above scenario we fired an on change event in the input, with the options
 target.value equals to 10
+
+- @testing-library/user-event, this module from testing-library, allows us to
+  simulate better the user behavior when developing tests, instead of manually
+  fire each event, we can fire all the events related to user behavior at once
+  (i.e. onchange, onkeydown, onkeyup, onkeypress, etc...), so it represents
+  better what users typically do:
+
+```js
+test('entering an invalid value shows an error message [user-event module]', () => {
+  render(<FavoriteNumber />)
+  const input = screen.getByLabelText(/favorite number/i)
+  user.type(input, '10')
+  expect(screen.getByRole('alert')).toHaveTextContent(/the number is invalid/i)
+})
+```
