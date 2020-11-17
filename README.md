@@ -5,6 +5,9 @@ _Course material for testing React components using react-testing-library_
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
+- [notes](#notes)
+
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 - `react-dom.js` - Render a React component for testing
@@ -40,3 +43,33 @@ _Course material for testing React components using react-testing-library_
 > Note: the setup for this project uses kcd-scripts. Don't worry about that. You
 > can learn about how to configure jest properly in the "Configure Jest for
 > Testing JavaScript Applications" module of TestingJavaScript.com
+
+### notes
+
+- @testing-library/jest-dom : The Jest DOM library provides really useful
+  extensions to jest’s built-in assertion library that will make it easier for
+  us to write our test assertions, also make the error messages more easy to
+  understand. You can extend expect to use it:
+
+  ```js
+  import {toHaveAttribute} from '@testing-library/jest-dom'
+
+  expect.extend({toHaveAttribute})
+  ```
+
+  ... or extend everything:
+
+  ```js
+  import * as jestDOM from '@testing-library/jest-dom'
+
+  expect.extend(jestDOM)
+  ```
+
+  ... or import like this:
+
+  ```js
+  import '@testing-library/jest-dom/extend-expect'
+  ```
+
+Also, you can check in the docs for all currently available assertion methods:
+(https://github.com/testing-library/jest-dom)[https://github.com/testing-library/jest-dom]
