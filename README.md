@@ -5,7 +5,6 @@ _Course material for testing React components using react-testing-library_
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [notes](#notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -89,3 +88,15 @@ const input = screen.getByLabelText(/favorite number/i)
 const input = screen.getByLabelText(/favorite number/i)
 expect(input).toHaveAttribute('type', 'number')
 ```
+
+- Debug allows us to inspect how the code looks like, at a specific point, and
+  we can use it like that:
+
+```js
+const {debug} = render(<FavoriteNumber />)
+debug(input)
+```
+
+It defaults to the container where all of our queries are bound to, or it will
+print out the DOM node that we pass to it, making it much easier to develop our
+tests
