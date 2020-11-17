@@ -134,3 +134,17 @@ test('entering an invalid value shows an error message [user-event module]', () 
   expect(screen.getByRole('alert')).toHaveTextContent(/the number is invalid/i)
 })
 ```
+
+- **rerender**, the rerender method is extracted from render, and it can be
+  useful to simulate, or debug code after the component is re-rendered with
+  other props
+
+```js
+const {debug, rerender} = render(<FavoriteNumber />)
+const input = screen.getByLabelText(/favorite number/i)
+user.type(input, '10')
+debug()
+expect(screen.getByRole('alert')).toHaveTextContent(/the number is invalid/i)
+rerender(<FavoriteNumber max={10} />)
+debug()
+```
