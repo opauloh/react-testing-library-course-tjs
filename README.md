@@ -254,3 +254,17 @@ function GreetingLoader({loadGreeting = api.loadGreeting}) {
 
 and by using `({loadGreeting = api.loadGreeting})` we still have the default
 values
+
+- **Mocking Components**: with jest.mock we can mock other components from or
+  not other libraries, like that:
+
+```js
+jest.mock('react-transition-group', () => {
+  return {
+    CSSTransition: props => (props.in ? props.children : null),
+  }
+})
+```
+
+and this is useful when we want to avoid some specific implementation that are
+not relevant for our test, like remove a setTimeOut from the wrapper component
