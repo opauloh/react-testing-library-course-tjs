@@ -268,3 +268,106 @@ jest.mock('react-transition-group', () => {
 
 and this is useful when we want to avoid some specific implementation that are
 not relevant for our test, like remove a setTimeOut from the wrapper component
+
+- ErrorBoundary: It is possible to debug an ErrorBoundary component, and there
+  are a few techniques to do that:
+
+Create a component that can throw an error:
+
+```js
+function Bomb({shouldThrow}) {
+  if (shouldThrow) throw new Error('💣')
+
+  return null
+}
+```
+
+Create the test component and rerender the ErrorBoundary with the Error, and
+check for errors using expect.any(Error)
+
+```js
+test('calls reportError and renders that where was a problem', () => {
+  const {rerender} = render(
+    <ErrorBoundary>
+      <Bomb />
+    </ErrorBoundary>,
+  )
+
+  rerender(
+    <ErrorBoundary>
+      <Bomb shouldThrow />
+    </ErrorBoundary>,
+  )
+
+  const error = expect.any(Error)
+})
+```
+
+- It's also possible to check if some API has been called with the right
+  properties, using jest.mock, like in this case our ErrorBoundary component was
+  looking like that:
+
+```js
+import React from 'react'
+import {reportError} from './api'
+
+class ErrorBoundary extends React.Component {
+  state = {hasError: false}
+  componentDidCatch(error, info) {
+    this.setState({hasError: true})
+    reportError(error, info)
+  }
+  ///...
+}
+
+export {ErrorBoundary}
+```
+
+and in our test we mocked reportError from api and checked if the api was called
+with the right parameters
+
+```js
+jest.mock('../api')
+
+test('calls reportError and renders that where was a problem', () => {
+  mockReportError.mockResolvedValueOnce({success: true})
+
+  //....
+
+  const error = expect.any(Error)
+  const info = {componentStack: expect.stringContaining('Bomb')}
+  expect(mockReportError).toHaveBeenCalledWith(error, info)
+  expect(mockReportError).toHaveBeenCalledTimes(1)
+})
+```
+
+- Also whenever we use jest.mock(), it is a good practice to call afterEach and
+  clearAllMocks, so we guarantee that other tests in this file are not receiving
+  the mock we configured in this test. (they are not leaking out to other
+  tests):
+
+```js
+afterEach(() => {
+  jest.clearAllMocks()
+})
+```
+
+- We can use jest.spyOn(), to override some implementations like console.error
+  (to avoid an large error due to stack trace when it is expected), and to setup
+  this for all tests we can use the beforeAll method:
+
+```js
+beforeAll(() => {
+  jest.spyOn(console, 'error').mockImplementation(() => {})
+})
+```
+
+- When overriding methods, it's important to restore they to their original
+  state by calling mockRestore() in the afterAll method:
+
+```js
+afterAll(() => {
+  console.error.mockRestore()
+  console.error('error restored')
+})
+```
