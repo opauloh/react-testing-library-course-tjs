@@ -174,3 +174,54 @@ test('the form is accessible', async () => {
   expect(results).toHaveNoViolations()
 
 ```
+
+- Mocking: whenever our components deals with HTTP requests, we can use
+  jest.mock() api, to mock those requests, he takes all the functions that are
+  exported from that module, and replace them with mock functions. Then when we
+  import a method from the api module that was mocked, its give us back a mocked
+  version of that method.
+
+```js
+import {loadGreeting} from '../api'
+
+jest.mock('../api') // now all methods from api are mocked, i.e. loadGreeting
+```
+
+Also is a good practice to rename those methods, to be more clear that they are
+mocked:
+
+```js
+import {loadGreeting as mockLoadGreeting} from '../api'
+
+test('loads greetings on click', () => {
+  mockLoadGreeting.mockResolvedValueOnce({data: {greeting: 'TEST_GREETING'}})
+  const {getByLabelText, getByText} = render(<GreetingLoader />)
+  const nameInput = getByLabelText(/name/i)
+  const loadButton = getByText(/load/i)
+  nameInput.value = 'Mary'
+  fireEvent.click(loadButton)
+})
+```
+
+- wait : this method from react testing library is an async utility and we use
+  it whenever we have to wait for some action to be complete, also then we have
+  to transform our functions into async await. Note: it has been replaced with
+  waitFor in new versions of 'react-testing-library':
+
+```js
+import {render, fireEvent, wait} from '@testing-library/react'
+
+test('loads greetings on click', async () => {
+  mockLoadGreeting.mockResolvedValueOnce({data: {greeting: 'TEST_GREETING'}})
+  const {getByLabelText, getByText} = render(<GreetingLoader />)
+  const nameInput = getByLabelText(/name/i)
+  const loadButton = getByText(/load/i)
+  nameInput.value = 'Mary'
+  fireEvent.click(loadButton)
+  expect(mockLoadGreeting).toHaveBeenCalledWith('Mary')
+  expect(mockLoadGreeting).toHaveBeenCalledTimes(1)
+  wait(() =>
+    expect(getByLabelText(/greeting/i)).toHaveTextContent('TEXT_GREETING'),
+  )
+})
+```
