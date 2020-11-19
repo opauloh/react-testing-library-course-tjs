@@ -80,7 +80,7 @@ const input = screen.getByLabelText(/favorite number/i)
 ```
 
 - We can use regex to let our tests more flexible, like that:
-  `/favorite number/i`, the "i", stands for insensitive case, because in this
+  `/favorite number/i`, the "I", stands for insensitive case, because in this
   case the user is not impacted by the case of the label texts, and if we decide
   to change it, we don't need to rewrite our tests:
 
@@ -123,7 +123,7 @@ target.value equals to 10
 - @testing-library/user-event, this module from testing-library, allows us to
   simulate better the user behavior when developing tests, instead of manually
   fire each event, we can fire all the events related to user behavior at once
-  (i.e. onchange, onkeydown, onkeyup, onkeypress, etc...), so it represents
+  (i.e. onChange, onKeyDown, onKeyUp, onKeypress, etc...), so it represents
   better what users typically do:
 
 ```js
@@ -147,4 +147,30 @@ debug()
 expect(screen.getByRole('alert')).toHaveTextContent(/the number is invalid/i)
 rerender(<FavoriteNumber max={10} />)
 debug()
+```
+
+- **jest-axe**, we can use this library to test assertions against accessibility
+  (a11y), using the method toHaveNoViolations(), that can be extended by
+  importing `import 'jest-axe/extend-expect'` or
+  `import {axe, toHaveNoviolations} from 'jest-axe'`
+
+```js
+
+
+
+function AccessibleForm() {
+  return (
+    <form>
+      <label htmlFor="email">Email</label>
+      <input placeholder="email" id="email" />
+    </form>
+  )
+}
+
+
+test('the form is accessible', async () => {
+  const {container} = render(<AccessibleForm />)
+  const results = await axe(container)
+  expect(results).toHaveNoViolations()
+
 ```
