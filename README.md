@@ -225,3 +225,32 @@ test('loads greetings on click', async () => {
   )
 })
 ```
+
+- In certain environments, i.e. when we have our components in Storybook, we
+  can't use jest.mock(), so we can mock our functions in another way for
+  testing, by using jest.fn():
+
+```js
+import * as React from 'react'
+import {render} from '@testing-library/react'
+import {GreetingLoader} from '../greeting-loader-02-dependency-injection'
+
+test('loads greetings on click', async () => {
+  const mockLoadGreeting = jest.fn()
+  mockLoadGreeting.mockResolvedValueOnce({data: {greeting: 'hi'}})
+  render(<GreetingLoader loadGreeting={mockLoadGreeting} />)
+})
+```
+
+Then in the component we add the api as dependency injection:
+
+```js
+import React from 'react'
+import * as api from './api'
+
+function GreetingLoader({loadGreeting = api.loadGreeting}) {
+
+```
+
+and by using `({loadGreeting = api.loadGreeting})` we still have the default
+values
