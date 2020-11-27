@@ -1,49 +1,21 @@
 import * as React from 'react'
-import {fireEvent, render, screen} from '@testing-library/react'
-import {savePost, savePost as mockSavePost} from '../api'
+import {fireEvent, render, screen, wait} from '@testing-library/react'
+import {Redirect as mockRedirect} from 'react-router'
+import {savePost as mockSavePost} from '../api'
+import Editor from '../Editor'
 
-function Editor({user}) {
-  const [isSaving, setIsSaving] = React.useState(false)
-  const handleSubmit = e => {
-    e.preventDefault()
-
-    const {title, content, tags} = e.target.elements
-    const newPost = {
-      title: title.value,
-      content: content.value,
-      tags: tags.value.split(',').map(t => t.trim()),
-      authorId: user.id,
-    }
-
-    setIsSaving(true)
-    savePost(newPost)
+jest.mock('react-router', () => {
+  return {
+    Redirect: jest.fn(() => null),
   }
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="title-input">Title</label>
-      <input id="title-input" name="title" />
-
-      <label htmlFor="content-input">Content</label>
-      <textarea id="content-input" name="content" />
-
-      <label htmlFor="tags-input">Tags</label>
-      <input id="tags-input" name="tags" />
-
-      <button type="submit" disabled={isSaving}>
-        Submit
-      </button>
-    </form>
-  )
-}
-
+})
 jest.mock('../api')
 
 afterEach(() => {
   jest.clearAllMocks()
 })
 
-test('renders a form with title, content, tags and a submit button', () => {
+test('renders a form with title, content, tags and a submit button', async () => {
   const fakePost = {
     title: 'Test Title',
     content: 'Test Content',
@@ -71,4 +43,7 @@ test('renders a form with title, content, tags and a submit button', () => {
   })
 
   expect(mockSavePost).toHaveBeenCalledTimes(1)
+
+  // eslint-disable-next-line testing-library/prefer-wait-for
+  await wait(() => expect(mockRedirect).toHaveBeenCalledWith({to: '/'}, {}))
 })
