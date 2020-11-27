@@ -401,3 +401,22 @@ rerender(<Bomb shouldThrow />)
     because that's an implementation detail. React could render your component
     many, many times and that shouldn't make any difference on the user
     experience of your application.)
+- - Sometimes it's a good idea to generate a fake data to test your code against
+    different kind or sizes of data, this can be done using libraries like
+    **faker** or **test-data-bot**
+- - when we are getting the error `Cannot read property 'then' of undefined`
+    when using the then() on a promise, you can solve this issue by using
+    mockResolvedValueOnce() method, i.e:
+
+```js
+import {savePost as mockSavePost} from '../api'
+
+test('renders a form with title, content, tags and a submit button', async () => {
+  mockSavePost.mockResolvedValueOnce()
+  //...
+})
+```
+
+- - To test against a rejected promise we can use the method
+    mockRejectedValueOnce(), i.e:  
+    `mockSavePost.mockRejectedValueOnce({data: {error: testError}})`
