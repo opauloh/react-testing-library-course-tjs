@@ -1,4 +1,5 @@
 import * as React from 'react'
+// eslint-disable-next-line testing-library/prefer-wait-for
 import {fireEvent, render, screen, wait} from '@testing-library/react'
 import {Redirect as mockRedirect} from 'react-router'
 import {savePost as mockSavePost} from '../api'
@@ -25,6 +26,8 @@ test('renders a form with title, content, tags and a submit button', async () =>
     id: 'user-1',
   }
 
+  const preDate = new Date().getTime()
+
   render(<Editor user={fakeUser} />)
 
   screen.getByLabelText(/title/i).value = fakePost.title
@@ -39,11 +42,18 @@ test('renders a form with title, content, tags and a submit button', async () =>
 
   expect(mockSavePost).toHaveBeenCalledWith({
     ...fakePost,
+    date: expect.any(String),
     authorId: fakeUser.id,
   })
 
   expect(mockSavePost).toHaveBeenCalledTimes(1)
 
+  const postDate = new Date().getTime()
+
+  const date = new Date(mockSavePost.mock.calls[0][0].date).getTime()
+
+  expect(date).toBeGreaterThanOrEqual(preDate)
+  expect(date).toBeLessThanOrEqual(postDate)
   // eslint-disable-next-line testing-library/prefer-wait-for
   await wait(() => expect(mockRedirect).toHaveBeenCalledWith({to: '/'}, {}))
 })
