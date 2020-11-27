@@ -390,3 +390,9 @@ const {rerender} = render(<Bomb />, {wrapper: ErrorBoundary})
 //and this is considered for next rerenderers
 rerender(<Bomb shouldThrow />)
 ```
+
+- **TDD** (Test Driven Development): The idea is the red-green-refactor cycle,
+  we start out with a test that is red (failing), and then based on that test,
+  we create the code that's necessary to make that test pass, and no more than
+  the code that's necessary to make it pass, and this makes our design of our
+  component more intentional, because we are thinking from outside in
