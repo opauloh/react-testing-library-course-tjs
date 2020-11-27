@@ -377,3 +377,16 @@ afterAll(() => {
   source code. This means you can get the benefits of automatically generated
   snapshots without having to switch to an external file to make sure the
   correct value was written.
+
+- **wrapper**: the second argument in the render() function allows we to pass an
+  object of options, and one of them is the wrapper, and we can pass into
+  wrapper what is the wrapper for the render and subsequent rerenderers, so we
+  can let the code more clear
+
+```js
+//Bomb is wrapped by ErrorBoundary
+const {rerender} = render(<Bomb />, {wrapper: ErrorBoundary})
+
+//and this is considered for next rerenderers
+rerender(<Bomb shouldThrow />)
+```
