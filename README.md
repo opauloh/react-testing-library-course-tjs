@@ -396,3 +396,8 @@ rerender(<Bomb shouldThrow />)
   we create the code that's necessary to make that test pass, and no more than
   the code that's necessary to make it pass, and this makes our design of our
   component more intentional, because we are thinking from outside in
+- - Notes: Adding an assertion to how many times a component is rendered is
+    generally a bad idea because you're optimizing for the wrong things (That's
+    because that's an implementation detail. React could render your component
+    many, many times and that shouldn't make any difference on the user
+    experience of your application.)
