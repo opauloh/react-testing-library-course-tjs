@@ -88,3 +88,34 @@ test('Ensure Error Boundaries Can Successfully Recover from Errors', () => {
   expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   expect(screen.queryByText(/try again/i)).not.toBeInTheDocument()
 })
+
+test('Ensure Error Boundaries Can Successfully Recover from Errors [wrapper]', () => {
+  mockReportError.mockResolvedValueOnce({success: true})
+
+  const {rerender} = render(<Bomb />, {wrapper: ErrorBoundary})
+
+  rerender(<Bomb shouldThrow />)
+
+  const error = expect.any(Error)
+  const info = {componentStack: expect.stringContaining('Bomb')}
+  expect(mockReportError).toHaveBeenCalledWith(error, info)
+  expect(mockReportError).toHaveBeenCalledTimes(1)
+  expect(console.error).toHaveBeenCalledTimes(2) // twice, once by jest-dom and once by react-dom
+
+  expect(screen.getByRole('alert').textContent).toMatchInlineSnapshot(
+    `"There was a problem."`,
+  )
+
+  console.error.mockClear()
+  mockReportError.mockClear()
+
+  rerender(<Bomb />)
+
+  fireEvent.click(screen.getByText(/try again/i))
+
+  expect(mockReportError).not.toHaveBeenCalled()
+  expect(console.error).not.toHaveBeenCalled()
+
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  expect(screen.queryByText(/try again/i)).not.toBeInTheDocument()
+})
