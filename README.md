@@ -420,3 +420,6 @@ test('renders a form with title, content, tags and a submit button', async () =>
 - - To test against a rejected promise we can use the method
     mockRejectedValueOnce(), i.e:  
     `mockSavePost.mockRejectedValueOnce({data: {error: testError}})`
+
+- - Consider using render functions whenever you start duplicating your logic
+    into tests i.e: `tdd.js`
