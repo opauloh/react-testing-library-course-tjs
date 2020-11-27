@@ -1,6 +1,7 @@
 import * as React from 'react'
 // eslint-disable-next-line testing-library/prefer-wait-for
 import {fireEvent, render, screen, wait} from '@testing-library/react'
+import {build, fake, sequence} from 'test-data-bot'
 import {Redirect as mockRedirect} from 'react-router'
 import {savePost as mockSavePost} from '../api'
 import Editor from '../Editor'
@@ -16,17 +17,20 @@ afterEach(() => {
   jest.clearAllMocks()
 })
 
-test('renders a form with title, content, tags and a submit button', async () => {
-  const fakePost = {
-    title: 'Test Title',
-    content: 'Test Content',
-    tags: ['tag1', 'tag2'],
-  }
-  const fakeUser = {
-    id: 'user-1',
-  }
+const postBuilder = build('Post').fields({
+  title: fake(f => f.lorem.words()),
+  content: fake(f => f.lorem.paragraphs().replace(/\r/g, '')), //replace all new lines with empty string
+  tags: fake(f => [f.lorem.words(), f.lorem.words(), f.lorem.words()]),
+})
 
-  const preDate = new Date().getTime()
+const userBuilder = build('User').fields({
+  id: sequence(s => `user-${s}`),
+})
+
+function renderEditor() {
+  const fakePost = postBuilder()
+  // const fakePost = postBuilder({content: 'something special'}) //if some property must be special because affects the behavior of the application
+  const fakeUser = userBuilder()
 
   render(<Editor user={fakeUser} />)
 
@@ -35,6 +39,20 @@ test('renders a form with title, content, tags and a submit button', async () =>
   screen.getByLabelText(/tags/i).value = fakePost.tags.join(', ')
 
   const submitButton = screen.getByText(/submit/i)
+
+  return {
+    fakeUser,
+    fakePost,
+    submitButton,
+  }
+}
+
+test('renders a form with title, content, tags and a submit button', async () => {
+  mockSavePost.mockResolvedValueOnce()
+
+  const preDate = new Date().getTime()
+
+  const {fakePost, fakeUser, submitButton} = renderEditor()
 
   fireEvent.click(submitButton)
 
@@ -56,4 +74,19 @@ test('renders a form with title, content, tags and a submit button', async () =>
   expect(date).toBeLessThanOrEqual(postDate)
   // eslint-disable-next-line testing-library/prefer-wait-for
   await wait(() => expect(mockRedirect).toHaveBeenCalledWith({to: '/'}, {}))
+})
+
+test('renders an error message from the server', async () => {
+  const testError = 'test error'
+  mockSavePost.mockRejectedValueOnce({data: {error: testError}})
+
+  const {submitButton} = renderEditor()
+
+  fireEvent.click(submitButton)
+
+  // eslint-disable-next-line testing-library/prefer-wait-for
+  await wait(async () => {
+    expect(await screen.findByRole('alert')).toHaveTextContent(testError)
+    expect(submitButton).toBeEnabled()
+  })
 })
