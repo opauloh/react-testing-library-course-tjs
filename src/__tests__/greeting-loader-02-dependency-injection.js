@@ -1,6 +1,5 @@
 import * as React from 'react'
-// eslint-disable-next-line testing-library/prefer-wait-for
-import {render, screen, fireEvent, wait} from '@testing-library/react'
+import {render, screen, fireEvent, waitFor} from '@testing-library/react'
 import {GreetingLoader} from '../greeting-loader-02-dependency-injection'
 
 test('loads greetings on click', async () => {
@@ -16,8 +15,7 @@ test('loads greetings on click', async () => {
 
   expect(mockLoadGreeting).toHaveBeenLastCalledWith('Mary')
   expect(mockLoadGreeting).toHaveBeenCalledTimes(1)
-  // eslint-disable-next-line testing-library/prefer-wait-for
-  await wait(() =>
+  await waitFor(() =>
     expect(screen.getByLabelText(/greeting/i)).toHaveTextContent(testGreeting),
   )
   expect(screen.getByLabelText(/greeting/i)).toHaveTextContent(testGreeting)

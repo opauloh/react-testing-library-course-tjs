@@ -1,6 +1,5 @@
 import * as React from 'react'
-// eslint-disable-next-line testing-library/prefer-wait-for
-import {fireEvent, render, screen, wait} from '@testing-library/react'
+import {fireEvent, render, screen, waitFor} from '@testing-library/react'
 import {build, fake, sequence} from 'test-data-bot'
 import {Redirect as mockRedirect} from 'react-router'
 import {savePost as mockSavePost} from '../api'
@@ -73,7 +72,7 @@ test('renders a form with title, content, tags and a submit button', async () =>
   expect(date).toBeGreaterThanOrEqual(preDate)
   expect(date).toBeLessThanOrEqual(postDate)
   // eslint-disable-next-line testing-library/prefer-wait-for
-  await wait(() => expect(mockRedirect).toHaveBeenCalledWith({to: '/'}, {}))
+  await waitFor(() => expect(mockRedirect).toHaveBeenCalledWith({to: '/'}, {}))
 })
 
 test('renders an error message from the server', async () => {
@@ -85,7 +84,7 @@ test('renders an error message from the server', async () => {
   fireEvent.click(submitButton)
 
   // eslint-disable-next-line testing-library/prefer-wait-for
-  await wait(async () => {
+  await waitFor(async () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(testError)
     expect(submitButton).toBeEnabled()
   })
