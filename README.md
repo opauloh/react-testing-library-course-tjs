@@ -261,7 +261,7 @@ values
 ```js
 jest.mock('react-transition-group', () => {
   return {
-    CSSTransition: props => (props.in ? props.children : null),
+    CSSTransition: (props) => (props.in ? props.children : null),
   }
 })
 ```
@@ -453,4 +453,21 @@ test('navigation', () => {
   )
   // ...
 })
+```
+
+- Mock API Calls: We can use msw to mock our api calls, remember to use a fetch
+  polyfill like whatwg-fetch
+
+```js
+import {setupServer} from 'msw/node' //because our tests run on node environment
+
+const server = setupServer(
+  rest.post('/greeting', (req, res, ctx) => {
+    return res(ctx.json({data: {greeting: `Hello ${req.body.subject}`}}))
+  }),
+)
+
+beforeAll(() => server.listen({onUnhandledRequest: 'error'}))
+afterAll(() => server.close())
+afterEach(() => server.resetHandlers())
 ```
