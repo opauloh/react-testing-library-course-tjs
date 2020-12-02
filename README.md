@@ -423,3 +423,34 @@ test('renders a form with title, content, tags and a submit button', async () =>
 
 - - Consider using render functions whenever you start duplicating your logic
     into tests i.e: `tdd.js`
+
+- Any time we need to test a component that needs a context, (i.e Switch and
+  Route from react-router-dom) we need to render that component with the context
+  provider
+
+```js
+render(
+  <Router history={history}>
+    <Main />
+  </Router>,
+)
+```
+
+- When testing navigation we might want to create our own history to test
+  forward and backward:
+
+```js
+// ...
+import {Router} from 'react-router-dom'
+import {createMemoryHistory} from 'history'
+//...
+test('navigation', () => {
+  const history = createMemoryHistory({initialEntries: ['/']})
+  render(
+    <Router history={history}>
+      <Main />
+    </Router>,
+  )
+  // ...
+})
+```
