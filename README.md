@@ -490,3 +490,21 @@ beforeAll(() => server.listen({onUnhandledRequest: 'error'}))
 afterAll(() => server.close())
 afterEach(() => server.resetHandlers())
 ```
+
+- whenever we need to wrap components or contexts to often we can create a
+  custom render function, that can be put in a file shareable across our tests,
+  in this case we overwrite the render method with our custom render
+
+```js
+//...
+import {render as rtlRender, screen} from '@testing-library/react'
+//
+
+function render(ui, {route = '/', ...renderOptions} = {}) {
+  window.history.pushState({}, 'Test page', [route])
+  function Wrapper({children}) {
+    return <BrowserRouter>{children}</BrowserRouter>
+  }
+  return rtlRender(ui, {wrapper: Wrapper, ...renderOptions})
+}
+```
