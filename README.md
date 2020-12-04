@@ -455,6 +455,25 @@ test('navigation', () => {
 })
 ```
 
+- A new, less verbose version of doing it by using BrowserRouter:
+
+```js
+// ...
+import {BrowserRouter} from 'react-router-dom'
+
+//...
+test('navigation', () => {
+  window.history.pushState({}, 'Test page', '/')
+  render(
+    <BrowserRouter>
+      <Main />
+    </BrowserRouter>,
+  )
+
+  // ...
+})
+```
+
 - Mock API Calls: We can use msw to mock our api calls, remember to use a fetch
   polyfill like whatwg-fetch
 
