@@ -534,3 +534,38 @@ test('can render with redux with defaults', () => {
   expect(screen.getByLabelText(/count/i)).toHaveTextContent('1')
 })
 ```
+
+- to do re-renders with ours custom renders with providers, we can create a
+  wrapper into our custom renders, then we get access to our re-renders methods,
+  without re-rendering the provider:
+
+```js
+function render(
+  ui,
+  {initialState, store = createStore(reducer, initialState), ...options} = {},
+) {
+  function Wrapper({children}) {
+    return <Provider store={store}>{children}</Provider>
+  }
+  return rtlRender(ui, {wrapper: Wrapper, ...options})
+}
+```
+
+- If we want to make assertions on store we can return it from the render (not
+  recommended, since store is an implementation detail, but can be useful in
+  some situations):
+
+```js
+function render(
+  ui,
+  {initialState, store = createStore(reducer, initialState), ...options} = {},
+) {
+  function Wrapper({children}) {
+    return <Provider store={store}>{children}</Provider>
+  }
+  return {
+    ...rtlRender(ui, {wrapper: Wrapper, ...options}),
+    store,
+  }
+}
+```
