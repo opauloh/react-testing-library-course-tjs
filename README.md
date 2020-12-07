@@ -569,3 +569,26 @@ function render(
   }
 }
 ```
+
+- Custom hooks: when you have a custom hook that serves just a single component,
+  then it's recommended to just test the component instead
+
+- When testing custom hooks one of the approaches is to write a component for
+  the test, and test component behavior:
+
+```js
+// ...
+test('exposes the count and increment/decrement functions', () => {
+  let result
+  function TestComponent() {
+    result = useCounter()
+    return null
+  }
+  render(<TestComponent />)
+  expect(result.count).toBe(0)
+  act(() => result.increment())
+  expect(result.count).toBe(1)
+  act(() => result.decrement())
+  expect(result.count).toBe(0)
+})
+```
