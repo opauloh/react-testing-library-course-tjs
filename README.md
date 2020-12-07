@@ -592,3 +592,19 @@ test('exposes the count and increment/decrement functions', () => {
   expect(result.count).toBe(0)
 })
 ```
+
+- We can make use of object constants in our custom renders/setups
+
+```js
+function setup({initialProps} = {}) {
+  //let result; // using let would make our component creat a brand new result every single interaction
+  const result = {}
+  function TestComponent(props) {
+    result.current = useCounter(props)
+    return null
+  }
+  render(<TestComponent {...initialProps} />)
+
+  return result
+}
+```
