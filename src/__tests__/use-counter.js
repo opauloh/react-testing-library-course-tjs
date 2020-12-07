@@ -54,3 +54,13 @@ test('allows customization of the step [renderHook]', () => {
   actHook(() => result.current.decrement())
   expect(result.current.count).toBe(0)
 })
+
+test('the step can be changed [renderHook]', () => {
+  const {result, rerender} = renderHook(useCounter, {initialProps: {step: 3}})
+  expect(result.current.count).toBe(0)
+  actHook(() => result.current.increment())
+  expect(result.current.count).toBe(3)
+  rerender({step: 2})
+  actHook(() => result.current.decrement())
+  expect(result.current.count).toBe(1)
+})
