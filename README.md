@@ -608,3 +608,18 @@ function setup({initialProps} = {}) {
   return result
 }
 ```
+
+- We can use import `renderHook()` and `act()` method from
+  `'@testing-library/react-hooks'` to test our hooks instead of creating our
+  custom setup:
+
+```js
+test('allows customization of the step [renderHook]', () => {
+  const {result} = renderHook(useCounter, {initialProps: {step: 2}})
+  expect(result.current.count).toBe(0)
+  act(() => result.current.increment())
+  expect(result.current.count).toBe(2)
+  act(() => result.current.decrement())
+  expect(result.current.count).toBe(0)
+})
+```
