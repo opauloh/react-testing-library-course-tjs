@@ -508,3 +508,29 @@ function render(ui, {route = '/', ...renderOptions} = {}) {
   return rtlRender(ui, {wrapper: Wrapper, ...renderOptions})
 }
 ```
+
+- Testing redux: A lot of people try to test the reducer and the action creators
+  all separate from one another, and that's fine if you're testing edge cases.
+  For most of the cases, you can get a lot of good coverage and a lot of good
+  confidence out of testing these two things together. This concept applies to
+  other kind of providers as well, so we are considering redux as being a
+  implementation detail, thus, our approach works even if we decide to go to
+  another state management, because all of the interactions that we're doing in
+  our tests is totally Redux agnostic.
+
+```js
+//...
+import {Provider} from 'react-redux'
+import {Counter} from '../redux-counter'
+import {store} from '../redux-store'
+
+test('can render with redux with defaults', () => {
+  render(
+    <Provider store={store}>
+      <Counter />
+    </Provider>,
+  )
+  fireEvent.click(screen.getByText('+'))
+  expect(screen.getByLabelText(/count/i)).toHaveTextContent('1')
+})
+```
