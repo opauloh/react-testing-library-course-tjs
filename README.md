@@ -623,3 +623,18 @@ test('allows customization of the step [renderHook]', () => {
   expect(result.current.count).toBe(0)
 })
 ```
+
+- renderHook also provides a `rerender()` method, this is useful when we want to
+  rerender our component with new props without losing track of current state
+
+```js
+test('the step can be changed [renderHook]', () => {
+  const {result, rerender} = renderHook(useCounter, {initialProps: {step: 3}})
+  expect(result.current.count).toBe(0)
+  actHook(() => result.current.increment())
+  expect(result.current.count).toBe(3)
+  rerender({step: 2})
+  actHook(() => result.current.decrement())
+  expect(result.current.count).toBe(1)
+})
+```
