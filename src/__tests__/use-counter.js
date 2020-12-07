@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {render, act} from '@testing-library/react'
+import {renderHook, act as actHook} from '@testing-library/react-hooks'
 import {useCounter} from '../use-counter'
 
 function setup({initialProps} = {}) {
@@ -33,5 +34,23 @@ test('allows customization of the step', () => {
   act(() => result.current.increment())
   expect(result.current.count).toBe(2)
   act(() => result.current.decrement())
+  expect(result.current.count).toBe(0)
+})
+
+test('exposes the count and increment/decrement functions [renderHook]', () => {
+  const {result} = renderHook(useCounter)
+  expect(result.current.count).toBe(0)
+  actHook(() => result.current.increment())
+  expect(result.current.count).toBe(1)
+  actHook(() => result.current.decrement())
+  expect(result.current.count).toBe(0)
+})
+
+test('allows customization of the step [renderHook]', () => {
+  const {result} = renderHook(useCounter, {initialProps: {step: 2}})
+  expect(result.current.count).toBe(0)
+  actHook(() => result.current.increment())
+  expect(result.current.count).toBe(2)
+  actHook(() => result.current.decrement())
   expect(result.current.count).toBe(0)
 })
