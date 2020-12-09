@@ -638,3 +638,22 @@ test('the step can be changed [renderHook]', () => {
   expect(result.current.count).toBe(1)
 })
 ```
+
+- When you need to use jest `useFakeTimers`, it's important to remember to clean
+  those timers back to real timers to not affect your tests:
+
+```js
+//.....
+afterEach(() => {
+  jest.clearAllMocks()
+  jest.useRealTimers()
+})
+
+test('does not attempt to set state when unmounted (to prevent memory leaks)', () => {
+  jest.useFakeTimers()
+  const {unmount} = render(<Countdown />)
+  unmount()
+  act(() => jest.runOnlyPendingTimers())
+  expect(console.error).not.toHaveBeenCalled()
+})
+```
